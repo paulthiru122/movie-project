@@ -10,8 +10,8 @@ const API_OPTIONS ={
   method:'GET',
   headers:{
   accept:'application/json',
-  Authorization:`Bearer ${API_KEY}`
-  }
+  Authorization:`Bearer ${API_KEY}`,
+  },
 }
 
 const App = () => {
@@ -23,11 +23,13 @@ const App = () => {
 
 
 
-  const fetchMovies = async()=>{
+  const fetchMovies = async(query = '')=>{
     setIsLoading(true);
     setErrorMsg('');
     try{
-      const endpoint = `${API_BASE_URL}/discover/movie?sort_by=popularity.desc`;
+      const endpoint =query 
+      ?`${API_BASE_URL}/search/movie?query=${encodeURIComponent(query)} `:
+        `${API_BASE_URL}/discover/movie?sort_by=popularity.desc`;
           const response = await fetch(endpoint,API_OPTIONS)
 
       if(!response.ok){
@@ -49,7 +51,7 @@ const App = () => {
       setIsLoading(false)
     }
   }
-  useEffect(()=>{fetchMovies()},[])
+  useEffect(()=>{fetchMovies(searchTerm)},[searchTerm])
   return (
     <main>
       <div className='pattern' />
@@ -65,7 +67,7 @@ const App = () => {
             <p className='text-white'>Loading...</p>
           ): errormsg ?(<p className='text-red-500'>{errormsg}</p> ) :(
           <ul>
-            {movieList.map((movie)=>(<MovieCard key={movie.id} movie={movie} />)))}
+            {movieList.map((movie)=>(<MovieCard key={movie.id} movie={movie} />))}
           </ul>) }
         </section>
       </div>
